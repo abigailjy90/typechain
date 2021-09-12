@@ -9,6 +9,7 @@ class Block {
   ): string =>
     CryptoJs.SHA256(index + previousHash + timestamp + data).toString();
 
+  // 구조 검증
   static validateStructure = (aBlock: Block): boolean =>
     typeof aBlock.index === "number" &&
     typeof aBlock.hash === "string" &&
@@ -68,6 +69,16 @@ const createNewBlock = (data: string): Block => {
   return newBlock;
 };
 
+// 해쉬 검증
+const getHashforBlock = (aBlock: Block): string =>
+  Block.calculateBlockHash(
+    aBlock.index,
+    aBlock.previousHash,
+    aBlock.timestamp,
+    aBlock.data
+  );
+
+// 이전 블록과 새로운 블록 검증
 const isBlockValid = (candidateBlock: Block, previousBlock: Block): boolean => {
   if (!Block.validateStructure(candidateBlock)) {
     return false;
@@ -75,6 +86,16 @@ const isBlockValid = (candidateBlock: Block, previousBlock: Block): boolean => {
     return false;
   } else if (previousBlock.hash !== candidateBlock.previousHash) {
     return false;
+  } else if (getHashforBlock(candidateBlock) !== candidateBlock.hash) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+const addBlock = (candidateBlock: Block): void => {
+  if (isBlockValid(candidateBlock, getLatestBlock())) {
+    blockchain.push(candidateBlock);
   }
 };
 
