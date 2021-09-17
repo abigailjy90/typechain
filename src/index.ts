@@ -9,7 +9,7 @@ class Block {
   ): string =>
     CryptoJs.SHA256(index + previousHash + timestamp + data).toString();
 
-  // 구조 검증
+  // 구조 검증!
   static validateStructure = (aBlock: Block): boolean =>
     typeof aBlock.index === "number" &&
     typeof aBlock.hash === "string" &&
